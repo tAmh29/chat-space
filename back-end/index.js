@@ -38,11 +38,15 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-app.use(
-  cors({
-    origin: ["https://chat-space-client.vercel.app"],
-  })
-);
+
+app.use(cors({
+  origin: 'https://chat-space-client.vercel.app'
+}));
+
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 app.use(express.json());
 
