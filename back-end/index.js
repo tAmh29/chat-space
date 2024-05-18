@@ -271,5 +271,3 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-console.log("listening to port 8000");
-app.listen(8000);
