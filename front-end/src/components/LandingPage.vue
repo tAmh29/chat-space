@@ -61,16 +61,19 @@ export default {
     const EnterRoom = async (roomID) => {
       try {
         let currentUsername = localStorage.getItem("userName");
-        const response = await fetch("http://localhost:8000/api/enter-room", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            roomID,
-            userName: currentUsername,
-          }),
-        });
+        const response = await fetch(
+          "chat-space-server.vercel.app/api/enter-room",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              roomID,
+              userName: currentUsername,
+            }),
+          }
+        );
         console.log(roomID);
         const data = await response.json();
         console.log(data);
@@ -79,7 +82,7 @@ export default {
           currentRoomID.value = roomID;
 
           const messagesResponse = await fetch(
-            `http://localhost:8000/api/messages/${roomID}`
+            `chat-space-server.vercel.app/api/messages/${roomID}`
           );
           if (messagesResponse.ok) {
             const messagesData = await messagesResponse.json();
@@ -121,7 +124,7 @@ export default {
     async function fetchUsersInRoom(roomID) {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/users-in-room/${roomID}`
+          `chat-space-server.vercel.app/api/users-in-room/${roomID}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -146,7 +149,7 @@ export default {
         try {
           console.log(`Fetching profile picture for user: ${username}`);
           const response = await fetch(
-            `http://localhost:8000/api/user/${username}/picture`
+            `chat-space-server.vercel.app/api/user/${username}/picture`
           );
           if (!response.ok) {
             throw new Error(
@@ -178,10 +181,13 @@ export default {
         formData.append("userName", name.value);
         formData.append("image", file);
 
-        const response = await fetch("http://localhost:8000/api/upload", {
-          method: "POST",
-          body: formData,
-        });
+        const response = await fetch(
+          "chat-space-server.vercel.app/api/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
         const result = await response.json();
         if (result.success) {
@@ -194,7 +200,7 @@ export default {
     };
 
     const sendMessage = async () => {
-      await fetch("http://localhost:8000/api/messages", {
+      await fetch("chat-space-server.vercel.app/api/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
