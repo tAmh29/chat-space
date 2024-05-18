@@ -39,9 +39,13 @@ const pusher = new Pusher({
 });
 
 
-app.use(cors({
-  origin: 'https://chat-space-client.vercel.app'
-}));
+app.use(cors(
+  {
+    origin: 'https://chat-space-client.vercel.app',
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+));
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
