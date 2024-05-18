@@ -40,7 +40,7 @@ const pusher = new Pusher({
 
 app.use(
   cors({
-    origin: ["http://localhost:8000", "http://localhost:5173", , "https://chat-space-client.vercel.app"],
+    origin: ["https://chat-space-client.vercel.app"],
   })
 );
 
