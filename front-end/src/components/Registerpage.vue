@@ -24,19 +24,22 @@ export default {
         this.password,
         this.confirmPassword
       );
-      const response = await fetch("http://localhost:8000/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: this.email,
-          name: this.name,
-          username: this.username,
-          password: this.password,
-          confirmPassword: this.confirmPassword,
-        }),
-      });
+      const response = await fetch(
+        "https://chat-space-server.vercel.app/api/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: this.email,
+            name: this.name,
+            username: this.username,
+            password: this.password,
+            confirmPassword: this.confirmPassword,
+          }),
+        }
+      );
       const data = await response.json();
 
       // Check if registration was successful

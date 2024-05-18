@@ -11,16 +11,19 @@ export default {
     async submitForm() {
       // Handle form submission here
       console.log(this.username, this.password);
-      const response = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: this.username,
-          password: this.password,
-        }),
-      });
+      const response = await fetch(
+        "https://chat-space-server.vercel.app/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: this.username,
+            password: this.password,
+          }),
+        }
+      );
       const data = await response.json();
 
       // Check if login was successful
