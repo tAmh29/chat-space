@@ -47,6 +47,12 @@ app.use(cors(
   }
 ));
 
+// Content Security Policy
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' https://chat-space-server.vercel.app; style-src 'self' 'unsafe-inline'; script-src 'self' https://chat-space-server.vercel.app; connect-src 'self' https://chat-space-server.vercel.app; frame-src 'self'; font-src 'self'; object-src 'none';");
+  return next();
+});
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
