@@ -66,7 +66,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-app.use(express.json());
+app.use(cors());
 
 app.get("/api/user/:username/picture", async (req, res) => {
   const userName = req.params.username;
