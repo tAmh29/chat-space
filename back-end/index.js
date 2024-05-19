@@ -10,10 +10,27 @@ const multer = require("multer");
 const favicon = require("serve-favicon");
 
 const app = express();
-
 const path = require("path");
-const exp = require("constants");
+
+app.use(
+  cors({
+    origin: "https://chat-space-client.vercel.app",
+    credentials: true,
+  })
+);
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; img-src 'self' https://chat-space-server.vercel.app; style-src 'self' 'unsafe-inline'; script-src 'self' https://chat-space-server.vercel.app; connect-src 'self' https://chat-space-server.vercel.app; frame-src 'self'; font-src 'self'; object-src 'none';"
+  );
+  return next();
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "../back-end/public")));
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -24,14 +41,12 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
 const upload = multer({ storage: storage });
-app.use(express.static(path.join(__dirname, "../back-end/public")));
-app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
 dotenv.config();
 const JWTtoken = process.env.JWTTOKEN_;
 
+// Puhser configuration
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_APP_KEY,
@@ -40,27 +55,10 @@ const pusher = new Pusher({
   useTLS: true,
 });
 
-app.use(
-  cors({
-    origin: "https://chat-space-client.vercel.app",
-    credentials: true,
-  })
-);
-
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; img-src 'self' https://chat-space-server.vercel.app; style-src 'self' 'unsafe-inline'; script-src 'self' https://chat-space-server.vercel.app; connect-src 'self' https://chat-space-server.vercel.app; frame-src 'self'; font-src 'self'; object-src 'none';"
-  );
-  return next();
-});
-
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Welcome to Chat Space API");
@@ -142,8 +140,6 @@ app.post("/api/enter-room", async (req, res) => {
     res.status(500).json("Error: " + err);
   }
 });
-
-app.post;
 
 app.post("/api/messages", async (req, res) => {
   const { message, userName, roomID } = req.body;
