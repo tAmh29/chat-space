@@ -43,7 +43,6 @@ const pusher = new Pusher({
 app.use(
   cors({
     origin: "https://chat-space-client.vercel.app",
-    methods: ["GET", "POST"],
     credentials: true,
   })
 );
