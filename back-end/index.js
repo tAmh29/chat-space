@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
+app.use(express.static(path.join(__dirname, "../back-end/public")));
 dotenv.config();
 const JWTtoken = process.env.JWTTOKEN_;
 
