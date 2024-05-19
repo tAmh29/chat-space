@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const Room = require("../back-end/model/room.js");
 const multer = require("multer");
+const favicon = require("serve-favicon");
 
 const app = express();
 
@@ -26,6 +27,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 app.use(express.static(path.join(__dirname, "../back-end/public")));
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+
 dotenv.config();
 const JWTtoken = process.env.JWTTOKEN_;
 
