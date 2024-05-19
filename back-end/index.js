@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 dotenv.config();
-
+app.use(express.static(path.join(__dirname, "public")));
 const JWTtoken = process.env.JWTTOKEN_;
 
 const pusher = new Pusher({
@@ -58,8 +58,6 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-app.use(express.static("public"));
 
 app.use(express.json());
 
