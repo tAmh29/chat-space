@@ -30,6 +30,8 @@ dotenv.config();
 
 const JWTtoken = process.env.JWTTOKEN_;
 
+app.use(express.static("public"));
+
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_APP_KEY,
