@@ -11,6 +11,7 @@ const multer = require("multer");
 const app = express();
 
 const path = require("path");
+const exp = require("constants");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const storage = multer.diskStorage({
@@ -53,20 +54,12 @@ app.use((req, res, next) => {
   return next();
 });
 
-mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Database connected successfully"))
-  .catch((err) => console.log(err));
-
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-app.use(cors());
+app.use(express.json());
 
 app.get("/api/user/:username/picture", async (req, res) => {
   const userName = req.params.username;
