@@ -61,6 +61,10 @@ app.listen(PORT, () => {
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Welcome to Chat Space API");
+});
+
 app.get("/api/user/:username/picture", async (req, res) => {
   const userName = req.params.username;
   try {
