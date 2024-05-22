@@ -44,13 +44,14 @@ export default {
 
       if (!response.ok) {
         console.error("HTTP error", response.status);
-      } else {
-        console.log("Registration successful", data);
-        router.push("/login");
+        const text = await response.text();
+        console.error(text);
+        return;
       }
       // Check if registration was successful
       if (response.ok) {
         // Redirect to login page
+        console.log("Success");
         this.$router.push("/login");
       } else {
         // Handle registration error
