@@ -42,6 +42,12 @@ export default {
       );
       const data = await response.json();
 
+      if (!response.ok) {
+        console.error("HTTP error", response.status);
+      } else {
+        console.log("Registration successful", data);
+        router.push("/login");
+      }
       // Check if registration was successful
       if (response.ok) {
         // Redirect to login page
