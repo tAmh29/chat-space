@@ -44,7 +44,7 @@ export default {
 
       if (!response.ok) {
         console.error("HTTP error", response.status);
-        const text = await response.text();
+        const text = await response.clone();
         console.error(text);
         return;
       }
