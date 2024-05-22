@@ -14,7 +14,7 @@ const path = require("path");
 
 app.use(
   cors({
-    origin: "https://chat-space-client-bay.vercel.app",
+    origin: "https://chat-space-server-zeta.vercel.app/",
     methods: ["GET", "POST"],
     credentials: true,
   })

@@ -43,8 +43,7 @@ export default {
       const data = await response.json();
       // Log response data
       console.log(data);
-      const text = JSON.parse(response); // Parse the response to JSON
-      console.log(text);
+      const data =
 
       if (!response.ok) {
         console.error("HTTP error", response.status);
