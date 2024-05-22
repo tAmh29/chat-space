@@ -45,7 +45,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 dotenv.config();
-const JWTtoken = process.env.JWTTOKEN_;
+const JWTtoken = jwt.sign({ foo: "bar" }, process.env.JWTTOKEN_);
 
 // Puhser configuration
 const pusher = new Pusher({
