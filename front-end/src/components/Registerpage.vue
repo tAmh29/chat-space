@@ -43,7 +43,7 @@ export default {
       const data = await response.json();
       // Log response data
       console.log(data);
-      const text = JSON.parse(response);
+      const text = JSON.parse(response); // Parse the response to JSON
       console.log(text);
 
       if (!response.ok) {
