@@ -12,7 +12,7 @@ export default {
       // Handle form submission here
       console.log(this.username, this.password);
       const response = await fetch(
-        "https://chat-space-server-zeta.vercel.app//api/login",
+        "https://chat-space-server-zeta.vercel.app/api/login",
         {
           method: "POST",
           headers: {
