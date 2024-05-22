@@ -48,7 +48,7 @@ export default {
         this.$router.push("/login");
       } else {
         // Handle registration error
-        console.error("Registration error:", data.error);
+        console.error("Registration error:", data.error || data.message);
       }
     },
   },
