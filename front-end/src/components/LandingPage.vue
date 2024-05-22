@@ -62,7 +62,7 @@ export default {
       try {
         let currentUsername = localStorage.getItem("userName");
         const response = await fetch(
-          "https://chat-space-server.vercel.app/api/enter-room",
+          "https://chat-space-server-zeta.vercel.app/api/enter-room",
           {
             method: "POST",
             headers: {
@@ -82,7 +82,7 @@ export default {
           currentRoomID.value = roomID;
 
           const messagesResponse = await fetch(
-            `https://chat-space-server.vercel.app/api/messages/${roomID}`
+            `https://chat-space-server-zeta.vercel.app/api/messages/${roomID}`
           );
           if (messagesResponse.ok) {
             const messagesData = await messagesResponse.json();
@@ -124,7 +124,7 @@ export default {
     async function fetchUsersInRoom(roomID) {
       try {
         const response = await fetch(
-          `https://chat-space-server.vercel.app/api/users-in-room/${roomID}`
+          `https://chat-space-server-zeta.vercel.app/api/users-in-room/${roomID}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -149,7 +149,7 @@ export default {
         try {
           console.log(`Fetching profile picture for user: ${username}`);
           const response = await fetch(
-            `https://chat-space-server.vercel.app/api/user/${username}/picture`
+            `https://chat-space-server-zeta.vercel.app/api/user/${username}/picture`
           );
           if (!response.ok) {
             throw new Error(
@@ -182,7 +182,7 @@ export default {
         formData.append("image", file);
 
         const response = await fetch(
-          "https://chat-space-server.vercel.app/api/upload",
+          "https://chat-space-server-zeta.vercel.app/api/upload",
           {
             method: "POST",
             body: formData,
@@ -200,7 +200,7 @@ export default {
     };
 
     const sendMessage = async () => {
-      await fetch("https://chat-space-server.vercel.app/api/messages", {
+      await fetch("https://chat-space-server-zeta.vercel.app/api/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

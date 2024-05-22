@@ -14,7 +14,7 @@ const path = require("path");
 
 app.use(
   cors({
-    origin: "https://chat-space-client.vercel.app",
+    origin: "https://chat-space-client-bay.vercel.app",
     methods: ["GET", "POST"],
     credentials: true,
   })
@@ -22,7 +22,7 @@ app.use(
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self'; img-src 'self' https://chat-space-server.vercel.app; style-src 'self' 'unsafe-inline'; script-src 'self' https://chat-space-server.vercel.app; connect-src 'self' https://chat-space-server.vercel.app; frame-src 'self'; font-src 'self'; object-src 'none';"
+    "default-src 'self'; img-src 'self' https://chat-space-client-bay.vercel.app; style-src 'self' 'unsafe-inline'; script-src 'self' https://chat-space-client-bay.vercel.app; connect-src 'self' https://chat-space-client-bay.vercel.app; frame-src 'self'; font-src 'self'; object-src 'none';"
   );
   return next();
 });

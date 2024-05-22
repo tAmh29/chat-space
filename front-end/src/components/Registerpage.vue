@@ -25,7 +25,7 @@ export default {
         this.confirmPassword
       );
       const response = await fetch(
-        "https://chat-space-server.vercel.app/api/register",
+        "https://chat-space-server-zeta.vercel.app//api/register",
         {
           method: "POST",
           headers: {
