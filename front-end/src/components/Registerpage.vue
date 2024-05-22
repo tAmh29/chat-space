@@ -41,10 +41,6 @@ export default {
         }
       );
       const data = await response.json();
-      // Log response data
-      console.log(data);
-      const text = await response.json();
-      console.log(text);
 
       if (!response.ok) {
         console.error("HTTP error", response.status);
