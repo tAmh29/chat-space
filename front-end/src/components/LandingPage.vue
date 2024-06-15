@@ -17,7 +17,7 @@ export default {
     onMounted(async () => {
       Pusher.logToConsole = true;
 
-      const pusher = new Pusher("632c83562f64dd0b614e", {
+      const pusher = new Pusher("PUSHER_APP_KEY", {
         cluster: "us3",
       });
 
