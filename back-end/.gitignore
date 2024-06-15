@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env
+
+# Production build files
+/dist
+
+# Local development
+.vscode/
+*.log
+*.cache
+*.tmp
