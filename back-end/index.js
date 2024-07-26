@@ -7,65 +7,46 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const Room = require("../back-end/model/room.js");
 const multer = require("multer");
-const favicon = require("serve-favicon");
 
 const app = express();
-const path = require("path");
 
-app.use(
-  cors({
-    origin: "https://chat-space-client-bay.vercel.app",
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; img-src 'self' https://chat-space-client-bay.vercel.app; style-src 'self' 'unsafe-inline'; script-src 'self' https://chat-space-client-bay.vercel.app; connect-src 'self' https://chat-space-client-bay.vercel.app; frame-src 'self'; font-src 'self'; object-src 'none';"
-  );
-  return next();
-});
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "../back-end/public")));
-app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "../back-end/uploads");
+    cb(null, '../back-end/uploads')
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.originalname);
-  },
-});
-const upload = multer({ storage: storage });
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, file.originalname)
+  }
+})
+
+const upload = multer({ storage: storage })
+
 
 dotenv.config();
-const JWTtoken = jwt.sign({ foo: "bar" }, process.env.JWTTOKEN_);
 
-// Puhser configuration
+const JWTtoken = process.env.JWTTOKEN_;
+
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_APP_KEY,
   secret: process.env.PUSHER_APP_SECRET,
   cluster: process.env.PUSHER_APP_CLUSTER,
-  useTLS: true,
+  useTLS: true
 });
 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.use(
+  cors({
+    origin: ["http://localhost:8000", "http://localhost:5173", "http://localhost:3000" ],
+  })
+);
 
-app.get("/", (req, res) => {
-  res.send("Welcome to Chat Space API");
-});
+app.use(express.json());
 
-app.get("/api/user/:username/picture", async (req, res) => {
+app.get('/api/user/:username/picture', async (req, res) => {
   const userName = req.params.username;
   try {
     console.log(`Fetching profile picture for user: ${userName}`);
@@ -74,45 +55,41 @@ app.get("/api/user/:username/picture", async (req, res) => {
     console.log(`User found: ${user}`);
     if (user && user.profilePicture && user.profilePicture.originalName) {
       // Construct the image file path
-      const profilePicturePath = path.join(
-        __dirname,
-        "uploads",
-        user.profilePicture.originalName
-      );
+      const profilePicturePath = path.join(__dirname, 'uploads', user.profilePicture.originalName);
       console.log(`Profile picture path: ${profilePicturePath}`);
       // Send the image file
       res.sendFile(profilePicturePath);
     } else {
-      res.status(404).send("No profile picture found for this user");
+      res.status(404).send('No profile picture found for this user');
     }
   } catch (error) {
     console.error(`Error fetching profile picture for ${userName}:`, error);
-    res.status(500).send("Internal server error");
+    res.status(500).send('Internal server error');
   }
 });
 
-app.post("/api/upload", upload.single("image"), async (req, res) => {
+
+
+app.post('/api/upload', upload.single('image'), async (req, res) => {
   try {
     const { userName } = req.body;
-    console.log(userName);
+    console.log(userName)
     const img = req.file;
-    console.log(img);
-    const user = await User.findOne({ name: userName });
-
+    console.log(img)
+    const user = await User.findOne({ name: userName }); 
+    
     if (!user) {
       console.log(`User not found for username: ${userName}`);
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
     user.profilePicture = {
       data: img.buffer,
       contentType: img.mimetype,
-      originalName: img.originalname,
+      originalName: img.originalname
     };
     await user.save();
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
-      req.file.filename
-    }`;
-    res.json({ success: true, imageUrl });
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  res.json({ success: true, imageUrl });
   } catch (error) {
     console.error("Error uploading image:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -124,10 +101,10 @@ app.post("/api/enter-room", async (req, res) => {
   try {
     let room = await Room.findOne({ roomID });
     if (!room) {
-      const newRoom = new Room({
+      const newRoom = new Room({ 
         roomID: roomID,
         roomName: "Room for ID " + roomID,
-        members: [userName],
+        members: [userName]
       });
       await newRoom.save();
     }
@@ -140,22 +117,24 @@ app.post("/api/enter-room", async (req, res) => {
     console.error("Error saving user:", err);
     res.status(500).json("Error: " + err);
   }
-});
+})
+
+app.post
 
 app.post("/api/messages", async (req, res) => {
   const { message, userName, roomID } = req.body;
   console.log("Request body:", req.body);
   console.log("Received message for room:", roomID);
   try {
-    await pusher.trigger("chat", "message", {
-      message: message,
-      userName: userName,
-      roomID: roomID,
-    });
-    await Room.updateOne(
-      { roomID: roomID },
-      { $push: { messages: { userName, message } } }
-    );
+      await pusher.trigger("chat", "message", {
+    message: message,
+    userName: userName,
+    roomID: roomID
+      });
+      await Room.updateOne(
+        { roomID: roomID }, 
+        { $push: { messages: { userName, message } } }
+      );
     res.json({ message: "Message sent successfully" });
   } catch (error) {
     console.error("Error triggering Pusher:", error);
@@ -163,42 +142,43 @@ app.post("/api/messages", async (req, res) => {
   }
 });
 
-app.get("/api/users-in-room/:roomID", async (req, res) => {
+app.get('/api/users-in-room/:roomID', async (req, res) => {
   const roomID = req.params.roomID;
   try {
     console.log(`Fetching users in room: ${roomID}`);
     // Fetch the room from the database
-    const room = await Room.findOne({ roomID }).populate("members");
+    const room = await Room.findOne({ roomID }).populate('members');
     console.log(`Room found: ${room}`);
     if (room) {
       res.json(room.members);
     } else {
-      res.status(404).send("Room not found");
+      res.status(404).send('Room not found');
     }
   } catch (error) {
     console.error(`Error fetching users in room ${roomID}:`, error);
-    res.status(500).send("Internal server error");
+    res.status(500).send('Internal server error');
   }
 });
 
 app.get("/api/messages/:roomID", async (req, res) => {
   const { roomID } = req.params;
   try {
-    const room = await Room.findOne({ roomID }).populate("messages.userName");
-    const messagesWithSenderInfo = room.messages.map((message) => {
+    const room = await Room.findOne({ roomID }).populate('messages.userName');
+    const messagesWithSenderInfo = room.messages.map(message => {
       const isSender = req.user && message.userName === req.user.name;
       return {
         ...message.toObject(),
-        isSender: isSender,
+        isSender: isSender
       };
     });
-
+    
     res.json(messagesWithSenderInfo);
   } catch (error) {
     console.error("Error getting messages:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
@@ -219,9 +199,10 @@ app.post("/api/login", async (req, res) => {
       res.json({
         user: {
           userName: user.name,
-          token: token,
+          your_token: token,
         },
       });
+      console.log("Generated Token:", token);
     }
   } catch (err) {
     console.error("Error saving user:", err);
@@ -282,3 +263,6 @@ app.post("/api/register", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+console.log("listening to port 8000");
+app.listen(8000);

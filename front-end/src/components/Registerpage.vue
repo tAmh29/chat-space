@@ -25,7 +25,7 @@ export default {
         this.confirmPassword
       );
       const response = await fetch(
-        "https://chat-space-server-zeta.vercel.app/api/register",
+        "http://localhost:8000/api/register",
         {
           method: "POST",
           headers: {
@@ -49,6 +49,7 @@ export default {
       } else {
         // Handle registration error
         console.error("Registration error:", data.error);
+        alert ("Registration error: " + data.error);
       }
     },
   },
@@ -95,7 +96,7 @@ export default {
           placeholder="Confirm password"
           v-model="confirmPassword"
         />
-        <button type="submit">Register</button>
+        <button type="submit" id="register-btn" >Register</button>
       </form>
       <p class="not-member-text">
         Already a member?
@@ -120,26 +121,27 @@ export default {
 }
 
 .divider {
-  border-bottom: 1px solid #ffffff; /* Adjust color and thickness as needed */
-  width: 30%; /* Adjust width as needed */
-  margin: 0 auto 20px; /* Centers the divider and adds space below */
+  border-bottom: 1px solid #ffffff;
+  width: 30%;
+  margin: 0 auto 20px;
 }
 .register-form {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #251f1f; /* Assuming a dark background like in the image */
+  background-color: #c1c1c1;
 }
 
 .container {
-  background-color: #251f1f; /* Darker background for the form */
+  background-color: #251f1f;
   padding: 40px;
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Adding some shadow for depth */
-  color: #fff; /* Light text for visibility on dark background */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  color: #fff;
   width: 400px;
   text-align: center;
+  background-color: #4d4d4d;
 }
 
 h1 {
@@ -162,8 +164,8 @@ input[type="password"] {
   border: none;
   border-radius: 4px;
   margin-bottom: 10px; /* Space between the inputs */
-  background-color: #444; /* Lighter than container for contrast */
-  color: #fff; /* Light text */
+  background-color: #444;
+  color: #fff;
 }
 
 button {
@@ -172,13 +174,13 @@ button {
   padding: 12px;
   border: none;
   border-radius: 4px;
-  background-color: #251f1f; /* Styling the button with a blue color */
+  background-color: #251f1f;
   border: 1px solid #ccc;
   font-weight: bold;
   color: aliceblue;
   cursor: pointer;
-  margin-top: 20px; /* Spacing from the last input */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Optional: Adds a shadow to the button for depth */
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 button:hover {
@@ -192,6 +194,24 @@ p {
 a {
   color: #55aaff; /* Light blue color for the link for contrast */
   text-decoration: none;
+}
+
+#register-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  background-color: #4d4d4d;
+  color: aliceblue;
+  font-weight: bold;
+  text-align: center;
+}
+
+#register-btn:hover {
+  background-color: #000000;
+  color: aliceblue;
 }
 
 a:hover {

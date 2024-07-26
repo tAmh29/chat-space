@@ -12,7 +12,7 @@ export default {
       // Handle form submission here
       console.log(this.username, this.password);
       const response = await fetch(
-        "https://chat-space-server-zeta.vercel.app/api/login",
+        "http://localhost:8000/api/login",
         {
           method: "POST",
           headers: {
@@ -29,11 +29,13 @@ export default {
       // Check if login was successful
       if (response.ok) {
         localStorage.setItem("userName", data.user.userName);
+        localStorage.setItem("token", data.user.your_token);
         this.$router.push("/landingpage");
         console.log("Success");
       } else {
         // Handle login error
         console.error("Login error:", data.error);
+        alert("Login error: " + data.error);
       }
     },
   },
@@ -112,6 +114,7 @@ input[type="password"] {
   align-items: center;
   border-radius: 5%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  background-color : #4d4d4d;
 }
 
 .login-form {
@@ -122,7 +125,7 @@ input[type="password"] {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #251f1f;
+  background-color: #c1c1c1;
   color: aliceblue;
 }
 
@@ -160,7 +163,7 @@ h1 {
   border: 1px solid #ccc;
   margin-top: 20px;
   margin-bottom: 10px;
-  background-color: #251f1f;
+  background-color: #4d4d4d;
   color: aliceblue;
   font-weight: bold;
   text-align: center;

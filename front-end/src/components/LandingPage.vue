@@ -13,11 +13,23 @@ export default {
     const currentRoomID = ref(null);
     const showPopup = ref(true);
     const profileImageUrl = ref({}); // Store the profile image URL keyed by username
+    const isAuthenticated = ref(true);
+
+    const checkAuthentication = () => {
+      const token = localStorage.getItem("token");
+      if (!token || token === "undefined") {
+        isAuthenticated.value = false; // Update the ref if not authenticated
+      }
+    };
 
     onMounted(async () => {
+      checkAuthentication();
+      if (!isAuthenticated.value) {
+        return;
+      }
       Pusher.logToConsole = true;
 
-      const pusher = new Pusher("PUSHER_APP_KEY", {
+      const pusher = new Pusher("632c83562f64dd0b614e", {
         cluster: "us3",
       });
 
@@ -61,19 +73,16 @@ export default {
     const EnterRoom = async (roomID) => {
       try {
         let currentUsername = localStorage.getItem("userName");
-        const response = await fetch(
-          "https://chat-space-server-zeta.vercel.app/api/enter-room",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              roomID,
-              userName: currentUsername,
-            }),
-          }
-        );
+        const response = await fetch("http://localhost:8000/api/enter-room", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            roomID,
+            userName: currentUsername,
+          }),
+        });
         console.log(roomID);
         const data = await response.json();
         console.log(data);
@@ -82,7 +91,7 @@ export default {
           currentRoomID.value = roomID;
 
           const messagesResponse = await fetch(
-            `https://chat-space-server-zeta.vercel.app/api/messages/${roomID}`
+            `http://localhost:8000/api/messages/${roomID}`
           );
           if (messagesResponse.ok) {
             const messagesData = await messagesResponse.json();
@@ -124,7 +133,7 @@ export default {
     async function fetchUsersInRoom(roomID) {
       try {
         const response = await fetch(
-          `https://chat-space-server-zeta.vercel.app/api/users-in-room/${roomID}`
+          `http://localhost:8000/api/users-in-room/${roomID}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -149,7 +158,7 @@ export default {
         try {
           console.log(`Fetching profile picture for user: ${username}`);
           const response = await fetch(
-            `https://chat-space-server-zeta.vercel.app/api/user/${username}/picture`
+            `http://localhost:8000/api/user/${username}/picture`
           );
           if (!response.ok) {
             throw new Error(
@@ -181,13 +190,10 @@ export default {
         formData.append("userName", name.value);
         formData.append("image", file);
 
-        const response = await fetch(
-          "https://chat-space-server-zeta.vercel.app/api/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const response = await fetch("http://localhost:8000/api/upload", {
+          method: "POST",
+          body: formData,
+        });
 
         const result = await response.json();
         if (result.success) {
@@ -200,7 +206,7 @@ export default {
     };
 
     const sendMessage = async () => {
-      await fetch("https://chat-space-server-zeta.vercel.app/api/messages", {
+      await fetch("http://localhost:8000/api/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -219,6 +225,18 @@ export default {
       isUserInRoom.value = false;
     };
 
+    const logout = () => {
+      // Clear user-related data
+      localStorage.removeItem("token");
+      localStorage.removeItem("userName");
+      name.value = "";
+      currentRoomID.value = null;
+      isUserInRoom.value = false;
+
+      // Redirect to login page
+      window.location.href = "/login";
+    };
+
     return {
       messages,
       message,
@@ -235,6 +253,8 @@ export default {
       handlePictureInput,
       profileImageUrl,
       fetchProfilePicture,
+      logout,
+      isAuthenticated,
     };
   },
 };
@@ -242,19 +262,31 @@ export default {
 
 <template>
   <div class="landing-page">
-    <div class="pop-ups" v-if="showPopup">
-      <p>Welcome to the Chat Page!</p>
-      <p>Please add a room and Enter a channel</p>
-      <button @click="closePopup">Close</button>
+    <div v-if="!isAuthenticated">
+      <h1>You haven't logged in yet</h1>
+      <h1>Please register or log in to access this page.</h1>
+      <router-link to="/login">Login Page</router-link>
+    </div>
+    <div v-else>
+      <div class="pop-ups" v-if="showPopup">
+        <p>Welcome to the Chat Page!</p>
+        <p>Please add a room and Enter a channel</p>
+        <button @click="closePopup">Close</button>
+      </div>
     </div>
     <div class="page-container" v-show="!showPopup">
       <header class="nav-bar">
         <div class="navbar-container">
-          <div class="upload-btn-wrapper">
-            <img :src="profileImageUrl[name]" alt="" />
-            <input type="file" name="image" @change="handlePictureInput" />
+          <div class="wrapper">
+            <div class="upload-btn-wrapper">
+              <img :src="profileImageUrl[name]" alt="" />
+              <input type="file" name="image" @change="handlePictureInput" />
+            </div>
+            <div class="profileName">{{ name }}</div>
           </div>
-          <div class="profileName">{{ name }}</div>
+          <div>
+            <button @click="logout" class="logout-btn">Logout</button>
+          </div>
         </div>
       </header>
       <div class="body-content">
@@ -347,6 +379,11 @@ export default {
   width: 100%;
 }
 
+.wrapper {
+  display: flex;
+  align-items: center;
+}
+
 .profileName {
   color: white;
   font-size: 20px;
@@ -396,9 +433,19 @@ input[type="file"] {
 
 .navbar-container {
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
   padding: 30px;
+  width: 100%;
+}
+
+.logout-btn {
+  background-color: #526780;
+  color: white;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .pop-ups {
